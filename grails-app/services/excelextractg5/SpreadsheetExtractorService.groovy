@@ -1,12 +1,11 @@
 package excelextractg5
 
-
+import builders.dsl.spreadsheet.api.Color
 import builders.dsl.spreadsheet.builder.poi.PoiSpreadsheetBuilder
-import grails.gorm.transactions.Transactional
+import grails.gorm.transactions.ReadOnly
 
 import javax.servlet.http.HttpServletResponse
 
-@Transactional
 class SpreadsheetExtractorService {
 
     def generate(HttpServletResponse response) {
@@ -21,12 +20,78 @@ class SpreadsheetExtractorService {
                 font {
                     style bold
                 }
-                background whiteSmoke
+                background Color.aliceBlue
+            }
+
+            style('subheading') {
+                font {
+                    color Color.white
+                    style bold
+                }
+                background Color.darkBlue
+            }
+
+            sheet('Mock') {
+                // header
+                row{
+                    style 'headers'
+                    cell 'Parameter'
+                    cell 'CC 1'
+                    cell 'Die 1'
+                    cell 'Gap Ass'
+                    cell 'Comments'
+                    cell 'Action items'
+                }
+                row{
+                    cell {
+                        style 'subheading'
+                        value "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
+                        colspan 6
+                    }
+                }
+
+                ['Q1', 'Q2', 'Q3', 'Q4'].each {aQuestion ->
+                    row {
+                        cell aQuestion
+                    }
+                }
+
+                row{
+                    cell {
+                        style 'subheading'
+                        value "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
+                        colspan 6
+                    }
+                }
+
+                ['Qu1', 'Qu2', 'Qu3', 'Qu4'].each {aQuestion ->
+                    row {
+                        cell aQuestion
+                    }
+                }
+
+                ['CC1', 'CC2', 'CC3', 'CC4'].eachWithIndex{ String entry, int i ->
+                    row( 3 + i ) {
+                        cell(2) {
+                            value entry
+                        }
+                    }
+                }
+
+                ['DI1', 'DI2', 'DI3', 'DI4'].eachWithIndex{ String entry, int i ->
+                    row( 3 + i ) {
+                        cell(3) {
+                            value entry
+                        }
+                    }
+                }
+
             }
 
             sheet('Abcd') {
                 // header
                 row {
+                    style 'headers'                             // use the headers style defined above
                     cell 'Question'
                     cell 'Value'
                 }
@@ -40,6 +105,7 @@ class SpreadsheetExtractorService {
             sheet('Wxyz') {
                 // header
                 row {
+                    style 'headers'
                     cell 'Question'
                     cell 'Value'
                 }
@@ -158,10 +224,12 @@ class SpreadsheetExtractorService {
         }
     }
 
+    @ReadOnly
     List<Abcd> fetchAbcds( reqId ) {
         Abcd.findAllByReqId( reqId )
     }
 
+    @ReadOnly
     List<Wxyz> fetchWxyzs( reqId ) {
         Wxyz.findAllByReqId( reqId )
     }
