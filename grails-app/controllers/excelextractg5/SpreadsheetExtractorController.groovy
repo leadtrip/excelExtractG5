@@ -1,6 +1,5 @@
 package excelextractg5
 
-
 import org.apache.poi.xssf.usermodel.XSSFWorkbookType
 import org.springframework.http.HttpStatus
 
@@ -26,4 +25,5 @@ class SpreadsheetExtractorController {
             response.outputStream.close()
         }
     }
+
 }

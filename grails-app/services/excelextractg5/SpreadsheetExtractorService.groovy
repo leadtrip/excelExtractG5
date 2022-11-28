@@ -1,50 +1,36 @@
 package excelextractg5
 
-import builders.dsl.spreadsheet.api.Color
+import builders.dsl.spreadsheet.builder.api.RowDefinition
+import builders.dsl.spreadsheet.builder.api.SheetDefinition
+import builders.dsl.spreadsheet.builder.api.WorkbookDefinition
 import builders.dsl.spreadsheet.builder.poi.PoiSpreadsheetBuilder
 import grails.gorm.transactions.ReadOnly
-
 import javax.servlet.http.HttpServletResponse
+
+import static excelextractg5.MyStyles.*
 
 class SpreadsheetExtractorService {
 
     def generate(HttpServletResponse response) {
         log.info("Generating spreadsheet")
 
-        PoiSpreadsheetBuilder.create(response.outputStream).build {
-            style ('headers') {
-                border(bottom) {
-                    style thick
-                    color black
-                }
-                font {
-                    style bold
-                }
-                background Color.aliceBlue
-            }
-
-            style('subheading') {
-                font {
-                    color Color.white
-                    style bold
-                }
-                background Color.darkBlue
-            }
+        PoiSpreadsheetBuilder.create(response.outputStream).build {workbookDef ->
+            apply MyStyles
 
             sheet('Mock') {
                 // header
                 row{
-                    style 'headers'
+                    style HEADERS
                     cell 'Parameter'
-                    cell 'CC 1'
-                    cell 'Die 1'
-                    cell 'Gap Ass'
+                    cell 'Cheese'
+                    cell 'Tree'
+                    cell 'Space'
                     cell 'Comments'
-                    cell 'Action items'
+                    cell 'Layby'
                 }
                 row{
                     cell {
-                        style 'subheading'
+                        style SUBHEADING
                         value "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
                         colspan 6
                     }
@@ -58,7 +44,7 @@ class SpreadsheetExtractorService {
 
                 row{
                     cell {
-                        style 'subheading'
+                        style SUBHEADING
                         value "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
                         colspan 6
                     }
@@ -91,7 +77,7 @@ class SpreadsheetExtractorService {
             sheet('Abcd') {
                 // header
                 row {
-                    style 'headers'                             // use the headers style defined above
+                    style HEADERS                             // use the headers style defined above
                     cell 'Question'
                     cell 'Value'
                 }
@@ -105,7 +91,7 @@ class SpreadsheetExtractorService {
             sheet('Wxyz') {
                 // header
                 row {
-                    style 'headers'
+                    style HEADERS
                     cell 'Question'
                     cell 'Value'
                 }
@@ -172,13 +158,13 @@ class SpreadsheetExtractorService {
                     }
                 }
 
-                // naming cells allows you to refer to them later
-                def aRow = row {
+                row {
                     cell 'A'
                     cell 'B'
                     cell 'A + B'
                 }
 
+                // naming cells allows you to refer to them later
                 row {
                     cell {
                         value 10
@@ -221,6 +207,47 @@ class SpreadsheetExtractorService {
                     }
                 }
             }
+
+            // pass the workbook to another method
+            anotherSheet( workbookDef )
+
+        }
+    }
+
+    /**
+     * Pass a sheet to another method
+     */
+    def anotherSheet( WorkbookDefinition workbookDef ) {
+        workbookDef.sheet( 'Another' ) {sheetDef ->
+            addToSheet( sheetDef )
+        }
+    }
+
+    /**
+     * Pass a row to another method
+     */
+    def addToSheet( SheetDefinition sheetDef ) {
+        sheetDef.row{
+            cell( 'H1' )
+            cell( 'H2' )
+            cell( 'H3' )
+            cell( 'H4' )
+        }
+
+        10.times { counter ->
+            sheetDef.row { rowDef ->
+                addRow( rowDef, counter )
+            }
+        }
+    }
+
+    /**
+     * Work with row
+     */
+    def addRow( RowDefinition row, Integer rowNumber ) {
+        row.cell(rowNumber)
+        3.times {colIdx ->
+            row.cell(UUID.randomUUID().toString().substring( 0, colIdx + rowNumber ))
         }
     }
 

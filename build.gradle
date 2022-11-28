@@ -82,6 +82,7 @@ dependencies {
     //implementation "com.monitorjbl:xlsx-streamer:2.1.0"
     implementation "builders.dsl:spreadsheet-builder-poi:$spreadSheetLibVersion"
     implementation "builders.dsl:spreadsheet-builder-groovy:$spreadSheetLibVersion"
+    implementation 'com.oracle.database.jdbc:ojdbc11:21.7.0.0'
 }
 
 bootRun {

@@ -11,7 +11,7 @@
         <div class="row">
             <div class="col-md-12">
                 <g:link action="generate">
-                    <button class="btn btn-info">Generate</button>
+                    <button class="btn btn-info">Generate test sheet</button>
                 </g:link>
             </div>
         </div>
